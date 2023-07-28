@@ -15,3 +15,8 @@ export const createClient = () => {
         client = createClient()
         client.on("ready", () => { fn(client) })
     }
+pipeline = (methods, input) => {
+    methods.reduce((prev, curr) => {
+        return prev(curr(input))
+    }, input)
+}
