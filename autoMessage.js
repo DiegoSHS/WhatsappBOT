@@ -1,20 +1,19 @@
 import fs from "fs"
 import qrcode from "qrcode-terminal"
-import { Client } from "whatsapp-web.js"
 import { MessageMedia } from "whatsapp-web.js"
+import { generateQR, initializeClient, useClient } from "./components"
 
-const NUMBERS_FILE_PATH = "./numbers.txt",
+const client = initializeClient(),
+    NUMBERS_FILE_PATH = "./numbers.txt",
     IMAGE_FILE_PATH = "./cat.png",
-    MESSAGE = "Your Message",
-    client = new Client()
+    MESSAGE = "Your Message"
 
-client.on("qr", (qr) => {
+generateQR(client, (qr) => {
     console.log("QR code received, scan it with your phone.")
     qrcode.generate(qr, { small: true })
 })
 
-client.on("ready", async () => {
-    console.log('Client ready')
+useClient(client, async (client) => {
     const numbers = fs.readFileSync(NUMBERS_FILE_PATH, "utf-8")
         .split("\n")
         .map(number => number.trim())
@@ -35,5 +34,4 @@ client.on("ready", async () => {
     }
     client.destroy()
 })
-
-client.initialize()
+initializeClient()
